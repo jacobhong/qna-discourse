@@ -1,0 +1,56 @@
+group 'qna-discourse'
+version '$version'
+
+apply plugin: 'java'
+apply plugin: 'maven'
+//apply plugin: 'pmd'
+apply plugin: 'maven-publish'
+apply plugin: 'spring-boot'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+project.ext {
+    springBootVersion = "$springBootVersion"
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE")
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+
+    compile (
+            [group: 'org.springframework.boot',        name: 'spring-boot-starter',             version:springBootVersion],
+            [group: 'org.springframework.boot',        name: 'spring-boot-starter-web',         version:springBootVersion],
+            [group: 'org.springframework.boot',        name: 'spring-boot-starter-actuator',    version:springBootVersion],
+    )
+
+}
+
+bootRun {
+    String executedDir = System.getProperty("user.dir")
+    String configLocation
+    if (executedDir.endsWith("customer")) {
+        configLocation = executedDir + '/customer-service/config/customer.properties'
+    } else {
+        configLocation = executedDir + '/config/customer.properties'
+    }
+    systemProperty('spring.config.name', 'customer')
+    systemProperty('spring.config.location', "file:$configLocation")
+    systemProperty('spring.profiles.active', "customer")
+}
