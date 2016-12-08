@@ -1,2 +1,5 @@
 Manifest-Version: 1.0
+Main-Class: config.QnaApp
+Implementation-Title: Qna Discourse
+Implementation-Version: 1.0-SNAPSHOT
 

@@ -1,5 +1,5 @@
 group 'qna-discourse'
-version '$version'
+version "$version"
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -31,6 +31,21 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    baseName = 'qna-service'
+    manifest {
+        attributes("Main-Class":"config.QnaApp",
+                "Implementation-Title": "Qna Discourse",
+                "Implementation-Version": version)
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 
@@ -40,17 +55,4 @@ dependencies {
             [group: 'org.springframework.boot',        name: 'spring-boot-starter-actuator',    version:springBootVersion],
     )
 
-}
-
-bootRun {
-    String executedDir = System.getProperty("user.dir")
-    String configLocation
-    if (executedDir.endsWith("customer")) {
-        configLocation = executedDir + '/customer-service/config/customer.properties'
-    } else {
-        configLocation = executedDir + '/config/customer.properties'
-    }
-    systemProperty('spring.config.name', 'customer')
-    systemProperty('spring.config.location', "file:$configLocation")
-    systemProperty('spring.profiles.active', "customer")
 }
