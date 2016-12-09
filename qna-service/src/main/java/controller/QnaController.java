@@ -19,6 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,29 +33,20 @@ public class QnaController
 {
     private static final Logger logger = LoggerFactory.getLogger(QnaController.class);
 
-    private static final String API_TOKEN = "xoxp-114414444772-115025525495-114722023077-ac9d157bf85e560d7681981988d4da64";
+    private static final String API_TOKEN = "xoxp-114414444772-115025525495-115320773654-a57c65203f31524b485464e0191275fb";
     @Resource
     private RestTemplate restTemplate;
 
     @RequestMapping(value = "/channels", method = RequestMethod.GET)
     public QnaResponse getChannels(@RequestParam(value = "text") String text) throws IOException {
         String url = "https://qnadiscourse.slack.com/api/channels.list?";
-//        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        //https://qnadiscourse.slack.com/api/channels.history?
-        // token=xoxp-114414444772-115025525495-113890578256-8fc0bc4b68d4ad40dd84f9cc61b2724d
-        // channel=C3C7YK8TV
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-//        headers.add(X_API_KEY, getPropertyString(ADDRESS_TOKENIZER_MICROSERVICE_API_KEY));
-
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(url);
 
-        // If we are updating
-//        uriBuilder.pathSegment(token);
-
         uriBuilder.queryParam("token", API_TOKEN);
-//        uriBuilder.queryParam("channel", text);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -67,7 +60,6 @@ public class QnaController
         {
             if(channels.getKey().equals("channels"))
             {
-//                channelId = (String) channels.getValue();
                 List<Map<String, String>> channelArray = (List<Map<String, String>>) channels.getValue();
                 for(Map c : channelArray)
                 {
@@ -78,17 +70,8 @@ public class QnaController
                 }
             }
         }
-        logger.info(channelId);
-//        logger.info("Entering addressResponse(channelsList={})", channelsList);
         logger.info("Entering map(map={})", map);
 
-//        result = addressResponse.getBody();
-
-//        logger.info(text);
-//        String[] arr = text.split(",");
-
-
-        logger.info("Exiting test(test={})");
         url = "https://qnadiscourse.slack.com/api/channels.history?";
         uriBuilder = UriComponentsBuilder.fromUriString(url);
 
@@ -96,9 +79,54 @@ public class QnaController
         uriBuilder.queryParam("token", API_TOKEN);
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
-        logger.info("Entering addressResponse(addressResponse={})", addressResponse);
+        map = mapper.readValue(addressResponse.getBody(), Map.class);
+
+        /**
+         * logic to fetch messages between emojis
+         */
+//        Map<String, List<String>> messagesResponse = new LinkedHashMap<>();
+        List<List<String>> msgResponse = new ArrayList<>();
+        boolean reactionFound = false;
+        boolean end = false;
+        for(Map.Entry<String, Object> messages : map.entrySet())
+        {
+            if(messages.getKey().equals("messages"))
+            {
+                List<Map<String, String>> messagesArray = (List<Map<String, String>>) messages.getValue();
+                for(Map c : messagesArray)
+                {
+                    if(!end)
+                    {
+                        String usr = (String) c.get("user");
+                        String txt = (String) c.get("text");
+                        if(c.containsKey("reactions"))
+                        {
+                            List<LinkedHashMap<String, Object>> reactions = (List<LinkedHashMap<String, Object>>) c.get("reactions");
+                            for(LinkedHashMap<String, Object> r : reactions)
+                            {
+                                if(r.get("name").equals("star2"))
+                                {
+                                    msgResponse.add(0, new ArrayList(){{add(usr);add(txt);}});
+                                    reactionFound = true;
+                                }
+                                if(r.get("name").equals("star"))
+                                {
+                                    msgResponse.add(0, new ArrayList(){{add(usr);add(txt);}});
+                                    end = true;
+                                }
+                            }
+                        }
+                        else if(reactionFound)
+                        {
+                            msgResponse.add(0, new ArrayList(){{add(usr);add(txt);}});
+                        }
+                    }
+                }
+            }
+        }
+        logger.info("Entering messagesResponse(messagesResponse={})", msgResponse);
         QnaResponse response = new QnaResponse();
-        response.setText(addressResponse.getBody());
+        response.setText(String.valueOf(msgResponse));
         return response;
     }
 }
