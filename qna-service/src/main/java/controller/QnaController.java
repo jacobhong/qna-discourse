@@ -51,7 +51,7 @@ public class QnaController
         // If we are updating
 //        uriBuilder.pathSegment(token);
 
-        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113956237601-4dcab538a3184c0f59bd33d71087e232");
+        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113927695232-21451b3a4d392975f1c78f173f93b6aa");
 //        uriBuilder.queryParam("channel", text);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -92,7 +92,7 @@ public class QnaController
         uriBuilder = UriComponentsBuilder.fromUriString(url);
 
         uriBuilder.queryParam("channel", channelId);
-        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113956237601-4dcab538a3184c0f59bd33d71087e232");
+        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113927695232-21451b3a4d392975f1c78f173f93b6aa");
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
         logger.info("Entering addressResponse(addressResponse={})", addressResponse);
