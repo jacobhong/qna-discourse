@@ -33,7 +33,7 @@ public class QnaController
 {
     private static final Logger logger = LoggerFactory.getLogger(QnaController.class);
 
-    private static final String API_TOKEN = "xoxp-114414444772-115025525495-115320773654-a57c65203f31524b485464e0191275fb";
+    private static final String API_TOKEN = "xoxp-114414444772-115025525495-114324362208-fb7f539d3e839c6ef20e4b3ea6be2f0c";
     @Resource
     private RestTemplate restTemplate;
 
