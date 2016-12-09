@@ -33,7 +33,8 @@ public class QnaController
 {
     private static final Logger logger = LoggerFactory.getLogger(QnaController.class);
 
-    private static final String API_TOKEN = "xoxp-114414444772-115025525495-114324362208-fb7f539d3e839c6ef20e4b3ea6be2f0c";
+    private static final String API_TOKEN = "xoxp-114414444772-115025525495-";
+    private static final String API_TOKEN2 = "115710857318-be725a35dfa55589619922d610e4e4fe";
     @Resource
     private RestTemplate restTemplate;
 
@@ -46,7 +47,7 @@ public class QnaController
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(url);
 
-        uriBuilder.queryParam("token", API_TOKEN);
+        uriBuilder.queryParam("token", API_TOKEN + API_TOKEN2);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -76,7 +77,7 @@ public class QnaController
         uriBuilder = UriComponentsBuilder.fromUriString(url);
 
         uriBuilder.queryParam("channel", channelId);
-        uriBuilder.queryParam("token", API_TOKEN);
+        uriBuilder.queryParam("token", API_TOKEN + API_TOKEN2);
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
         map = mapper.readValue(addressResponse.getBody(), Map.class);
