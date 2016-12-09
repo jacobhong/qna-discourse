@@ -13,6 +13,10 @@ public class QnaApp
 {
     public static void main(String[] args)
     {
-        SpringApplication.run(QnaApp.class, args);
+        final Class[] sources = {
+                QnaApp.class,
+                QnaConfig.class
+        };
+        SpringApplication.run(sources, args);
     }
 }

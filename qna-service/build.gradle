@@ -57,18 +57,8 @@ dependencies {
 
 }
 
-//task stage(type: Copy, dependsOn: [clean, build]) {
-//    from jar.archivePath
-//    into project.rootDir
-//    rename {
-//        'app.jar'
-//    }
-//}
-//stage.mustRunAfter(clean)
-//
-//clean << {
-//    project.file('app.jar').delete()
-//}
-
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
+applicationDefaultJvmArgs = [
+        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+]

@@ -9,7 +9,7 @@
 if "%OS%"=="Windows_NT" setlocal
 
 @rem Add default JVM options here. You can also use JAVA_OPTS and QNA_SERVICE_OPTS to pass JVM options to this script.
-set DEFAULT_JVM_OPTS=
+set DEFAULT_JVM_OPTS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
 
 set DIRNAME=%~dp0
 if "%DIRNAME%" == "" set DIRNAME=.
