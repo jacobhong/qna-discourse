@@ -1,6 +1,7 @@
 package controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import config.QnaResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -34,7 +35,7 @@ public class QnaController
     private RestTemplate restTemplate;
 
     @RequestMapping(value = "/channels", method = RequestMethod.GET)
-    public ResponseEntity<String> getChannels(@RequestParam(value = "text") String text) throws IOException {
+    public QnaResponse getChannels(@RequestParam(value = "text") String text) throws IOException {
         String url = "https://qnadiscourse.slack.com/api/channels.list?";
 //        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         //https://qnadiscourse.slack.com/api/channels.history?
@@ -50,7 +51,7 @@ public class QnaController
         // If we are updating
 //        uriBuilder.pathSegment(token);
 
-        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113890578256-8fc0bc4b68d4ad40dd84f9cc61b2724d");
+        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113956237601-4dcab538a3184c0f59bd33d71087e232");
 //        uriBuilder.queryParam("channel", text);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -91,11 +92,12 @@ public class QnaController
         uriBuilder = UriComponentsBuilder.fromUriString(url);
 
         uriBuilder.queryParam("channel", channelId);
-        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113890578256-8fc0bc4b68d4ad40dd84f9cc61b2724d");
+        uriBuilder.queryParam("token", "xoxp-114414444772-115025525495-113956237601-4dcab538a3184c0f59bd33d71087e232");
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
         logger.info("Entering addressResponse(addressResponse={})", addressResponse);
-
-        return addressResponse;
+        QnaResponse response = new QnaResponse();
+        response.setText(addressResponse.getBody());
+        return response;
     }
 }
