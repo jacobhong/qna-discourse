@@ -5,6 +5,10 @@ package config;
  */
 public class QnaResponse
 {
+    private boolean ok = true;
+
+    private String text;
+
     public String getText() {
         return text;
     }
@@ -13,5 +17,11 @@ public class QnaResponse
         this.text = text;
     }
 
-    private String text;
+    public boolean isOk() {
+        return ok;
+    }
+
+    public void setOk(boolean ok) {
+        this.ok = ok;
+    }
 }
