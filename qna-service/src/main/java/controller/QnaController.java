@@ -124,9 +124,9 @@ public class QnaController
         {
             List<String> l = new ArrayList<>();
             l.add(c.get("name") + "\n");
-            l.add(c.get("id") + "\n");
-            l.add(c.get("description") + "\n");
-            l.add(BASE_DISCOURSE_URL + c.get("topic_url") + "\n");
+            l.add("categoryId: " + c.get("id") + "\n");
+            l.add("description: " + c.get("description") + "\n");
+            l.add("url: " + BASE_DISCOURSE_URL + c.get("topic_url") + "\n");
             categoriesList.add(l);
         }
         logger.info("Received categories: \n {}", categoriesList);
@@ -135,7 +135,7 @@ public class QnaController
     }
 
     @RequestMapping(value = "/topics-by-category", method = RequestMethod.GET)
-    public String getTopicsByCategory(@RequestParam(value="categoryId")String categoryId) throws IOException {
+    public String getTopicsByCategory(@RequestParam(value="text")String categoryId) throws IOException {
         logger.info("Fetching topics by categy...");
 
         HttpHeaders headers = new HttpHeaders();
@@ -161,9 +161,9 @@ public class QnaController
             l.add(BASE_DISCOURSE_URL + "/" + t.get("id") + "\n");
             topicsList.add(l);
         }
-        logger.info("Received topics by category: \n {}", map);
+        logger.info("Received topics by category: \n {}", topicsList);
 
-        return String.valueOf(map);
+        return String.valueOf(topicsList);
     }
 
     private String getChannelId(String text) throws IOException {
