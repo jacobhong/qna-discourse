@@ -48,7 +48,6 @@ public class QnaController
     private static final String DISCOURSE_TOPIC_URL = BASE_DISCOURSE_URL + "/posts?";
     private static final String DISCOURSE_API_KEY = "4e188b541f7fa868334dced411e5bf453dddf73c6f255558a212d6a7e37339da";
     private static final String DISCOURSE_USR = "jacob.hong";
-    private static final String DISCOURSE_RESPONSE_URL = "http://discourse.chrometime.com/t";
 
 
     // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
@@ -125,7 +124,7 @@ public class QnaController
             l.add(c.get("name") + "\n");
             l.add("categoryId: " + c.get("id") + "\n");
             l.add("description: " + c.get("description") + "\n");
-            l.add("url: " + DISCOURSE_RESPONSE_URL + c.get("topic_url") + "\n");
+            l.add("url: " + BASE_DISCOURSE_URL + c.get("topic_url") + "\n");
             categoriesList.add(l);
         }
         logger.info("Received categories: \n {}", categoriesList);
@@ -157,7 +156,7 @@ public class QnaController
         {
             List<String> l = new ArrayList<>();
             l.add(t.get("title") + "\n");
-            l.add("url: " + DISCOURSE_RESPONSE_URL + "/" + t.get("id") + "\n");
+            l.add("url: " + BASE_DISCOURSE_URL + "/t/" + t.get("id") + "\n");
             topicsList.add(l);
         }
         logger.info("Received topics by category: \n {}", topicsList);
@@ -326,6 +325,6 @@ public class QnaController
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.getBody(), Map.class);
 
-        return DISCOURSE_RESPONSE_URL + "title" + "/" + String.valueOf(map.get("id"));
+        return BASE_DISCOURSE_URL + "/t/" + "title" + "/" + String.valueOf(map.get("id"));
     }
 }
