@@ -47,6 +47,16 @@ public class QnaController
     private static final String DISCOURSE_USR = "jacob.hong";
     private static final String DISCOURSE_RESPONSE_URL = "http://discourse.chrometime.com/t/";
 
+
+    // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
+    // TODO : add search capability by keyword/category directly into slack
+    // TODO : possibly remove emojis after topic created, or create bot to do so based on events
+    // TODO : generate legit url after creating topic(right now its fake)
+    // TODO : grab images from posts
+    // TODO : possibly create threads from pinned messages
+    // TODO : make code cleaner and use transfer objects instead of maps
+
+
     @Resource
     private RestTemplate restTemplate;
 
@@ -78,11 +88,7 @@ public class QnaController
          * Send results to discourse to create thread
          */
         String url = createTopic(textParams[1], messages, textParams[2]);
-        // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
-        // TODO : add search capability by keyword/category directly into slack
-        // TODO : possibly remove emojis after topic created, or create bot to do so based on events
-        // TODO : generate legit url after creating topic(right now its fake)
-        // TODO : make code cleaner and use transfer objects instead of maps
+
         QnaResponse qnaResponse = new QnaResponse();
         qnaResponse.setText(url);
         logger.info("Successfully created topic... \n" + url);
