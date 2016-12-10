@@ -126,7 +126,7 @@ public class QnaController
             l.add(c.get("name") + "\n");
             l.add("categoryId: " + c.get("id") + "\n");
             l.add("description: " + c.get("description") + "\n");
-            l.add("url: " + BASE_DISCOURSE_URL + c.get("topic_url") + "\n");
+            l.add("url: " + DISCOURSE_RESPONSE_URL + c.get("topic_url") + "\n");
             categoriesList.add(l);
         }
         logger.info("Received categories: \n {}", categoriesList);
@@ -158,7 +158,7 @@ public class QnaController
         {
             List<String> l = new ArrayList<>();
             l.add(t.get("title") + "\n");
-            l.add(BASE_DISCOURSE_URL + "/" + t.get("id") + "\n");
+            l.add("url: " + BASE_DISCOURSE_URL + "/" + t.get("id") + "\n");
             topicsList.add(l);
         }
         logger.info("Received topics by category: \n {}", topicsList);
