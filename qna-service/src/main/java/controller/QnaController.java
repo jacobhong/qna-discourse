@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,21 +32,44 @@ public class QnaController
 {
     private static final Logger logger = LoggerFactory.getLogger(QnaController.class);
 
-    private static final String API_TOKEN = "xoxp-114414444772-115025525495-";
-    private static final String API_TOKEN2 = "115710857318-be725a35dfa55589619922d610e4e4fe";
+    private static final String SLACK_API_TOKEN = "xoxp-114414444772-115025525495-";
+    private static final String SLACK_API_TOKEN2 = "115710857318-be725a35dfa55589619922d610e4e4fe";
+    private static final String CHANNELS_URL = "https://qnadiscourse.slack.com/api/channels.list?";
+    private static final String CHANNELS_HISTORY_URL = "https://qnadiscourse.slack.com/api/channels.history?";
+    private static final String DISCOURSE_TOPIC_URL = "http://discourse.chrometime.com/posts?";
+    private static final String DISCOURSE_API_KEY = "4e188b541f7fa868334dced411e5bf453dddf73c6f255558a212d6a7e37339da";
+    private static final String DISCOURSE_USR = "jacob.hong";
+    private static final String DISCOURSE_RESPONSE_URL = "http://discourse.chrometime.com/t/";
+
     @Resource
     private RestTemplate restTemplate;
 
-    @RequestMapping(value = "/channels", method = RequestMethod.GET)
-    public QnaResponse getChannels(@RequestParam(value = "text") String text) throws IOException {
-        String url = "https://qnadiscourse.slack.com/api/channels.list?";
+    @RequestMapping(value = "/topic", method = RequestMethod.POST)
+    public QnaResponse createDiscourseTopic(@RequestParam(value = "text") String text) throws IOException {
+        /**
+         * First call slack to get list of channels, in order to get channel id
+         */
+        // 0 = channel name, 1 = topic name, 2 = category
+        String[] textParams = text.split("\\|");
+        String channelId = getChannelId(textParams[0]);
+        String messages = getChannelsHistory(channelId);
+        String url = createTopic(textParams[1], messages, textParams[2]);
+        QnaResponse qnaResponse = new QnaResponse();
+        qnaResponse.setText(url);
+        logger.info("Successfully created topic... \n" + url);
+
+        return qnaResponse;
+    }
+
+    private String getChannelId(String text) throws IOException {
+        logger.info("Fetching channelId for: ", text);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(url);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(CHANNELS_URL);
 
-        uriBuilder.queryParam("token", API_TOKEN + API_TOKEN2);
+        uriBuilder.queryParam("token", SLACK_API_TOKEN + SLACK_API_TOKEN2);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -71,21 +93,31 @@ public class QnaController
                 }
             }
         }
-        logger.info("Entering map(map={})", map);
 
-        url = "https://qnadiscourse.slack.com/api/channels.history?";
-        uriBuilder = UriComponentsBuilder.fromUriString(url);
+        logger.info("Received channelId[" + channelId + "]");
+        return channelId;
+    }
+
+    private String getChannelsHistory(String channelId) throws IOException {
+        logger.info("Fetching channel history for channelId: ", channelId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(CHANNELS_HISTORY_URL);
 
         uriBuilder.queryParam("channel", channelId);
-        uriBuilder.queryParam("token", API_TOKEN + API_TOKEN2);
+        uriBuilder.queryParam("token", SLACK_API_TOKEN + SLACK_API_TOKEN2);
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
-        map = mapper.readValue(addressResponse.getBody(), Map.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> map = mapper.readValue(addressResponse.getBody(), Map.class);
 
         /**
          * logic to fetch messages between emojis
          */
-//        Map<String, List<String>> messagesResponse = new LinkedHashMap<>();
         List<List<String>> msgResponse = new ArrayList<>();
         boolean reactionFound = false;
         boolean end = false;
@@ -125,9 +157,31 @@ public class QnaController
                 }
             }
         }
-        logger.info("Entering messagesResponse(messagesResponse={})", msgResponse);
-        QnaResponse response = new QnaResponse();
-        response.setText(String.valueOf(msgResponse));
-        return response;
+        logger.info("Received messages: \n {}", msgResponse);
+        return String.valueOf(msgResponse);
+    }
+
+    private String createTopic(String title, String body, String category) throws IOException {
+        //    curl -X POST -d title="Title of my topic" -d raw="This is the body of my topic" -d category="category_slug" http://localhost:3000/posts?api_key=test_d7fd0429940&api_username=test_user
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DISCOURSE_TOPIC_URL);
+
+        uriBuilder.queryParam("api_key", DISCOURSE_API_KEY);
+        uriBuilder.queryParam("api_username", DISCOURSE_USR);
+        uriBuilder.queryParam("title", title);
+        uriBuilder.queryParam("raw", body);
+        uriBuilder.queryParam("category", category);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.POST, entity, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String,Object> map = mapper.readValue(response.getBody(), Map.class);
+
+        return DISCOURSE_RESPONSE_URL + "title" + "/" + String.valueOf(map.get("id"));
     }
 }
