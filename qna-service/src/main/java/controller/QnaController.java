@@ -52,7 +52,6 @@ public class QnaController
 
     // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
     // TODO : possibly remove emojis after topic created, or create bot to do so based on events
-    // TODO : generate legit url after creating topic(right now its fake)
     // TODO : grab images from posts
     // TODO : possibly create threads from pinned messages
     // TODO : make code cleaner and use transfer objects instead of maps
@@ -325,6 +324,6 @@ public class QnaController
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.getBody(), Map.class);
 
-        return BASE_DISCOURSE_URL + "/t/" + "title" + "/" + String.valueOf(map.get("id"));
+        return BASE_DISCOURSE_URL + "/t/" + title + "/" + String.valueOf(map.get("topic_id"));
     }
 }
