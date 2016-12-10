@@ -163,7 +163,8 @@ public class QnaController
         }
         logger.info("Received topics by category: \n {}", topicsList);
 
-        return String.valueOf(topicsList);
+        // amazing string manipulation
+        return String.valueOf(topicsList).replaceAll("\\],", "\n").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(",", ":");
     }
 
     private String getChannelId(String text) throws IOException {
