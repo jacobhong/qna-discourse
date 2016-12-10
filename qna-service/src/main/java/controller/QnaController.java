@@ -52,13 +52,13 @@ public class QnaController
 
 
     // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
-    // TODO : search for categories
     // TODO : add search capability by keyword/category directly into slack
     // TODO : possibly remove emojis after topic created, or create bot to do so based on events
     // TODO : generate legit url after creating topic(right now its fake)
     // TODO : grab images from posts
     // TODO : possibly create threads from pinned messages
     // TODO : make code cleaner and use transfer objects instead of maps
+    // TODO : create http util
 
 
     @Resource
@@ -124,20 +124,24 @@ public class QnaController
         {
             List<String> l = new ArrayList<>();
             l.add(c.get("name") + "\n");
+            l.add(c.get("id") + "\n");
             l.add(c.get("description") + "\n");
             l.add(BASE_DISCOURSE_URL + c.get("topic_url") + "\n");
             categoriesList.add(l);
         }
         logger.info("Received categories: \n {}", categoriesList);
+        // amazing string manipulation
         return String.valueOf(categoriesList).replaceAll("\\],", "\n").replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(",", ":");
     }
 
     @RequestMapping(value = "/topics-by-category", method = RequestMethod.GET)
-    public String getTopicsByCategory(String categoryId) throws IOException {
+    public String getTopicsByCategory(@RequestParam(value="categoryId")String categoryId) throws IOException {
+        logger.info("Fetching topics by categy...");
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(DISCOURSE_TOPIC_URL);
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(BASE_DISCOURSE_URL + "/c/" + categoryId + ".json");
 
         uriBuilder.queryParam("api_key", DISCOURSE_API_KEY);
         uriBuilder.queryParam("api_username", DISCOURSE_USR);
@@ -147,6 +151,18 @@ public class QnaController
         ResponseEntity<String> response = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.getBody(), Map.class);
+        Map<String, Object> list = (Map<String, Object>) map.get("topic_list");
+        List<Map<String, Object>> topics = (List<Map<String, Object>>) list.get("topics");
+        List<List<String>> topicsList = new ArrayList<>();
+        for(Map<String, Object> t : topics)
+        {
+            List<String> l = new ArrayList<>();
+            l.add(t.get("title") + "\n");
+            l.add(BASE_DISCOURSE_URL + "/" + t.get("id") + "\n");
+            topicsList.add(l);
+        }
+        logger.info("Received topics by category: \n {}", map);
+
         return String.valueOf(map);
     }
 
@@ -255,7 +271,8 @@ public class QnaController
                         {
                             msg.add(userName);
                             msg.add(txt);
-                            msgResponse.add(0, msg);                        }
+                            msgResponse.add(0, msg);
+                        }
                     }
                 }
             }
