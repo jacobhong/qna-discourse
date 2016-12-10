@@ -48,7 +48,7 @@ public class QnaController
     private static final String DISCOURSE_TOPIC_URL = BASE_DISCOURSE_URL + "/posts?";
     private static final String DISCOURSE_API_KEY = "4e188b541f7fa868334dced411e5bf453dddf73c6f255558a212d6a7e37339da";
     private static final String DISCOURSE_USR = "jacob.hong";
-    private static final String DISCOURSE_RESPONSE_URL = "http://discourse.chrometime.com/t/";
+    private static final String DISCOURSE_RESPONSE_URL = "http://discourse.chrometime.com/t";
 
 
     // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
