@@ -52,7 +52,6 @@ public class QnaController
 
 
     // TODO : add ability to create categories if not exist(right now unknown categories are ignored)
-    // TODO : add search capability by keyword/category directly into slack
     // TODO : possibly remove emojis after topic created, or create bot to do so based on events
     // TODO : generate legit url after creating topic(right now its fake)
     // TODO : grab images from posts
@@ -158,7 +157,7 @@ public class QnaController
         {
             List<String> l = new ArrayList<>();
             l.add(t.get("title") + "\n");
-            l.add("url: " + BASE_DISCOURSE_URL + "/" + t.get("id") + "\n");
+            l.add("url: " + DISCOURSE_RESPONSE_URL + "/" + t.get("id") + "\n");
             topicsList.add(l);
         }
         logger.info("Received topics by category: \n {}", topicsList);
