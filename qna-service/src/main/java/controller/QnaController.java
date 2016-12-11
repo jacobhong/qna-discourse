@@ -324,6 +324,6 @@ public class QnaController
         ObjectMapper mapper = new ObjectMapper();
         Map<String,Object> map = mapper.readValue(response.getBody(), Map.class);
 
-        return BASE_DISCOURSE_URL + "/t/" + title + "/" + String.valueOf(map.get("topic_id"));
+        return BASE_DISCOURSE_URL + "/t/" + title.replaceAll("\\s", "%20") + "/" + String.valueOf(map.get("topic_id"));
     }
 }
