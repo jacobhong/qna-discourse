@@ -57,6 +57,7 @@ public class QnaController
     // TODO : possibly create threads from pinned messages
     // TODO : make code cleaner and use transfer objects instead of maps
     // TODO : create http util
+    // TODO : fetch more than 100 msgs
 
 
     @Resource
