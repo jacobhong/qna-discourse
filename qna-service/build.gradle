@@ -13,6 +13,7 @@ targetCompatibility = 1.8
 
 project.ext {
     springBootVersion = "$springBootVersion"
+    apacheLangVersion = "$apacheLangVersion"
 }
 
 buildscript {
@@ -48,11 +49,14 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-
+//    compile 'org.apache.commons:commons-lang3:3.5'
+    compile(group:"org.apache.commons", name:"commons-lang3", version:apacheLangVersion){
+        changing=true
+    }
     compile (
             [group: 'org.springframework.boot',        name: 'spring-boot-starter',             version:springBootVersion],
             [group: 'org.springframework.boot',        name: 'spring-boot-starter-web',         version:springBootVersion],
-            [group: 'org.springframework.boot',        name: 'spring-boot-starter-actuator',    version:springBootVersion],
+            [group: 'org.springframework.boot',        name: 'spring-boot-starter-actuator',    version:springBootVersion]
     )
 
 }

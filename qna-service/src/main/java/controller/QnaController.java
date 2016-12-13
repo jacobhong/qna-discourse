@@ -2,6 +2,7 @@ package controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import config.QnaResponse;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -314,7 +315,7 @@ public class QnaController
         uriBuilder.queryParam("api_key", DISCOURSE_API_KEY);
         uriBuilder.queryParam("api_username", DISCOURSE_USR);
         uriBuilder.queryParam("title", title);
-        uriBuilder.queryParam("raw", body);
+        uriBuilder.queryParam("raw", StringEscapeUtils.unescapeHtml4(body));
         uriBuilder.queryParam("category", category);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
