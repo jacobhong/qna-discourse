@@ -213,6 +213,7 @@ public class QnaController
 
         uriBuilder.queryParam("channel", channelId);
         uriBuilder.queryParam("token", SLACK_API_TOKEN + SLACK_API_TOKEN2);
+        uriBuilder.queryParam("count", 10000);
 
         ResponseEntity<String> addressResponse = restTemplate.exchange(uriBuilder.build().encode().toUri(), HttpMethod.GET, entity, String.class);
 
@@ -238,15 +239,22 @@ public class QnaController
                         String txt = (String) c.get("text");
                         String userName = "";
                         List<String> msg = new ArrayList<>();
-                        for(Map<String, Object> u : users)
-                        {
-                            if(usr.equals(u.get("id")))
-                            {
-                                userName = (String) u.get("name");
-                            }
-                        }
+
                         if(c.containsKey("reactions"))
                         {
+                            for(Map<String, Object> u : users)
+                            {
+                                if(u.get("id") != null)
+                                {
+                                    if(usr != null)
+                                    {
+                                        if(usr.equals(u.get("id")))
+                                        {
+                                            userName = (String) u.get("name");
+                                        }
+                                    }
+                                }
+                            }
                             List<LinkedHashMap<String, Object>> reactions = (List<LinkedHashMap<String, Object>>) c.get("reactions");
                             for(LinkedHashMap<String, Object> r : reactions)
                             {
@@ -268,6 +276,19 @@ public class QnaController
                         }
                         else if(reactionFound)
                         {
+                            for(Map<String, Object> u : users)
+                            {
+                                if(u.get("id") != null)
+                                {
+                                    if(usr != null)
+                                    {
+                                        if(usr.equals(u.get("id")))
+                                        {
+                                            userName = (String) u.get("name");
+                                        }
+                                    }
+                                }
+                            }
                             msg.add("<b>" + userName + "</b>");
                             msg.add(txt + "\n");
                             msgResponse.add(0, msg);
