@@ -249,14 +249,14 @@ public class QnaController
                             List<LinkedHashMap<String, Object>> reactions = (List<LinkedHashMap<String, Object>>) c.get("reactions");
                             for(LinkedHashMap<String, Object> r : reactions)
                             {
-                                if(r.get("name").equals("star2"))
+                                if(r.get("name").equals("end"))
                                 {
                                     msg.add("<b>" + userName + "</b>");
                                     msg.add(txt + "\n");
                                     msgResponse.add(0, msg);
                                     reactionFound = true;
                                 }
-                                if(r.get("name").equals("star"))
+                                if(r.get("name").equals("top"))
                                 {
                                     msg.add("<b>" + userName + "</b>");
                                     msg.add(txt + "\n");
