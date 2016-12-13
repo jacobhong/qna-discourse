@@ -251,15 +251,15 @@ public class QnaController
                             {
                                 if(r.get("name").equals("star2"))
                                 {
-                                    msg.add(userName);
-                                    msg.add(txt);
+                                    msg.add("<b>" + userName + "</b>");
+                                    msg.add(txt + "\n");
                                     msgResponse.add(0, msg);
                                     reactionFound = true;
                                 }
                                 if(r.get("name").equals("star"))
                                 {
-                                    msg.add(userName);
-                                    msg.add(txt);
+                                    msg.add("<b>" + userName + "</b>");
+                                    msg.add(txt + "\n");
                                     msgResponse.add(0, msg);
                                     end = true;
                                 }
@@ -267,8 +267,8 @@ public class QnaController
                         }
                         else if(reactionFound)
                         {
-                            msg.add(userName);
-                            msg.add(txt);
+                            msg.add("<b>" + userName + "</b>");
+                            msg.add(txt + "\n");
                             msgResponse.add(0, msg);
                         }
                     }
