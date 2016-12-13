@@ -39,8 +39,8 @@ public class QnaController
 
     private static final String BASE_SLACK_URL = "https://qnadiscourse.slack.com/api";
     private static final String BASE_DISCOURSE_URL = "http://discourse.chrometime.com";
-    private static final String SLACK_API_TOKEN = "xoxp-114414444772-115025525495-";
-    private static final String SLACK_API_TOKEN2 = "115710857318-be725a35dfa55589619922d610e4e4fe";
+    private static final String SLACK_API_TOKEN = "xoxp-3871549937-12815480849-116337369170-";
+    private static final String SLACK_API_TOKEN2 = "c2c0744f7028a5c471b34b30dd54799b";
     private static final String CATEGORIES_URL = BASE_DISCOURSE_URL + "/categories.json?";
     private static final String CHANNELS_URL = BASE_SLACK_URL + "/channels.list?";
     private static final String CHANNELS_HISTORY_URL = BASE_SLACK_URL + "/channels.history?";
